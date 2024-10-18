@@ -20,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../client')));
 
 const getSpells = () => fs.readFileSync(path.join(__dirname, '../allSpells.json'));
+
 const isSpellValid = (spell) => {
     const check = ['id', 'name', 'desc', 'categories', 'components', 'architecture'];
     const invalid = check.filter((key) => !spell[key]);
