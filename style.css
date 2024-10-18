@@ -3,7 +3,7 @@ body {
     font-size: 16px;
     line-height: 1.5;
     color: #333;
-    background-color: #f5f5f5;
+    background-color: #3c4672;
     margin: 0;
     padding: 0;
 }
@@ -43,6 +43,16 @@ a:hover {
 
 
 
+.smol {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    margin-bottom: 10px;
+}
+.smol > * {
+    margin: 0;
+}
 
 /* Add spell page */
 .addSpell {
@@ -54,6 +64,8 @@ a:hover {
 
     display: flex;
     flex-direction: column;
+
+    gap: 10px;
 }
 
 .multiple {
@@ -70,10 +82,23 @@ a:hover {
     transition: all 0.3s;
 
     user-select: none;
+
+    border: 1px solid #4440;
 }
 
 .selected {
     background-color: #444;
     color: #bfb;
+
+    border: 1px solid #bfb;
 }
 
+input {
+    padding: 5px;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+input:focus {
+    outline: none;
+}

@@ -43,8 +43,38 @@ const main = () => {
         });
         architecturesContainer.appendChild(architectureDiv);
     });
+
+    // Categories
+    CATEGORIES.forEach((category) => {
+        const categoryDiv = document.createElement("div");
+        categoryDiv.innerHTML = category;
+        categoryDiv.classList.add("selectable");
+        categoryDiv.addEventListener("click", () => {
+            if (selectedCategories.includes(category)) {
+                selectedCategories = selectedCategories.filter((c) => c !== category);
+                categoryDiv.classList.remove("selected");
+            } else {
+                selectedCategories.push(category);
+                categoryDiv.classList.add("selected");
+            }
+        });
+        categoriesContainer.appendChild(categoryDiv);
+    });
 }
 
 
 main();
+
+const componentSearch = document.getElementById("component-search");
+componentSearch.addEventListener("input", () => {
+    const componentsContainer = document.getElementById("components");
+
+    componentsContainer.querySelectorAll(".selectable").forEach((componentDiv) => {
+        if (componentDiv.innerHTML.toLowerCase().includes(componentSearch.value.toLowerCase())) {
+            componentDiv.style.display = "block";
+        } else {
+            componentDiv.style.display = "none";
+        }
+    });
+});
 
