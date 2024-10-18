@@ -16,22 +16,29 @@
     <!-- spell id, components, architecture -->
     <!-- Load the available components and architectures from js -->
     
-    <label for="spell-id">Spell ID:</label>
-    <input type="text" id="spell-id" placeholder="Spell ID">
-    <div class="component">
-        <label for="components">Components:</label>
-        <div id="components">
-            
-            <!-- <label>
-                <input type="checkbox" id="components" value="V">V
+    <main>
+
+        <div class="addSpell">
+            <label for="spell-id">Spell ID:
+                <input type="text" id="spell-id" placeholder="Spell ID">            
             </label>
-            <label>
-                <input type="checkbox" id="components" value="S">S
+
+            <label for="components">Components:
+                <div class="multiple" id="components">
+                </div>
             </label>
-            <label>
-                <input type="checkbox" id="components" value="M">M
-            </label> -->
+
+            <label for="architecture">Architecture:
+                <div class="multiple" id="architecture">
+                </div>
+            </label>
+
+            <button id="add-spell">Add Spell</button>
+
         </div>
-    </div>
+
+    </main>
+
+
 </body>
 </html>
