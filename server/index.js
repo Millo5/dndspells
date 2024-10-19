@@ -7,6 +7,7 @@
 // [{id: "", name: "", desc: [], categories: [], components: [], architecture: ""}]
 
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const fs = require('fs');
 const path = require('path');
@@ -14,6 +15,7 @@ const bodyParser = require('body-parser');
 
 const PORT = 3000;
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -46,7 +48,7 @@ app.post('/addSpell', (req, res) => {
     const spell = req.body;
 
     const wrong = isSpellValid(spell);
-    if (wrong) {
+    if (wrong.length > 0) {
         res.status(400).send('Spell is invalid; missing: ' + wrong.join(', '));
         return;
     }
@@ -79,6 +81,40 @@ app.post('/updateSpell', (req, res) => {
 
 
 
+// get spell from dnd5e.wikidot.com
+const getSpell = async (spellId) => {
+    // let spell = {
+    //     name: "",
+    //     desc: [],
+    // };
+
+    // let response = await fetch(`https://dnd5e.wikidot.com/spell:${spellId}`);
+    // let s = await response.text();
+
+    // let temp = document.createElement("div");
+    // temp.innerHTML = s;
+
+    // let content = temp.querySelector("#page-content");
+    
+    // spell.name = spellId.split("-").join(" ").toUpperCase();
+    // content.querySelectorAll("p").forEach(p => {
+    //     spell.desc.push(p.innerText);
+    // });
+
+    // return spell;
+
+    let response = await fetch(`https://dnd5e.wikidot.com/spell:${spellId}`);
+    let s = await response.text();
+
+    return s;
+}
+app.post('/getSpell', async (req, res) => {
+    const spellId = req.body.id;
+    const spell = await getSpell(spellId);
+    res.json(spell);
+});
+
+
 /*
 example of how to add a spell
 
@@ -96,7 +132,16 @@ fetch('http://localhost:3000/addSpell', {
         architecture: 'Enhancing',
     }),
 })
-    
+
+// Access to fetch at 'http://localhost:3000/addSpell' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+// fix:
+// add this to the fetch request
+// mode: 'cors'
+// or
+// mode: 'no-cors'
+
+
 */
 
 

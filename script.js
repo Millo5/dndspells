@@ -17,27 +17,6 @@ const exportSpellData = async () => {
     console.log(JSON.stringify(ALL_SPELLS));
 }
 
-const getSpell = async (spellId) => {
-    let spell = {
-        name: "",
-        desc: [],
-    };
-
-    let response = await fetch(`https://dnd5e.wikidot.com/spell:${spellId}`);
-    let s = await response.text();
-
-    let temp = document.createElement("div");
-    temp.innerHTML = s;
-
-    let content = temp.querySelector("#page-content");
-    
-    spell.name = spellId.split("-").join(" ").toUpperCase();
-    content.querySelectorAll("p").forEach(p => {
-        spell.desc.push(p.innerText);
-    });
-
-    return spell;
-}
 
 const showAllSpells = () => {
     let spellList = document.getElementById("spell-list");

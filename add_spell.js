@@ -1,6 +1,7 @@
 import { CATEGORIES, RUNE_COMPONENTS, RUNE_ARCHITECTURES } from "./static.js";
 
 
+
 var selectedComponents = [];
 var selectedCategories = [];
 var selectedArchitecture = "";
@@ -78,3 +79,37 @@ componentSearch.addEventListener("input", () => {
     });
 });
 
+
+
+const addButton = document.getElementById("add-spell");
+addButton.addEventListener("click", () => {
+    const spellId = document.getElementById("spell-id").value;
+    // const spell = getSpell(spellId);
+
+    console.log(spellId);
+
+    if (!spellId || selectedComponents.length === 0 || selectedCategories.length === 0 || !selectedArchitecture) {
+        alert("Please fill in all fields");
+        return;
+    }
+
+    fetch("/addSpell", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            id: spellId,
+            name: "testname",
+            desc: ["testdesc"],
+            components: selectedComponents,
+            categories: selectedCategories,
+            architecture: selectedArchitecture,
+        }),
+    })
+        .then((res) => res.text())
+        .then((res) => {
+            alert(res);
+            // window.location.href = "./index.html";
+        });
+});
