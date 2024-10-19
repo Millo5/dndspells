@@ -113,6 +113,7 @@ input[type="checkbox"] {
 
 #spell-details {
     display: none;
+    gap: 10px;
 }
 
 .option {
@@ -154,4 +155,75 @@ input[type="checkbox"] {
     background-color: #111;
     border: 1px solid #666;
     cursor: not-allowed;
+}
+
+/* Spell list */
+.main-backboard {
+    background-color: #222;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+
+    margin-top: 40px;
+}
+
+.spell {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+
+    display: flex;
+    gap: 10px;
+
+    cursor: pointer;
+}
+
+.spell > .left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    flex: 1;
+}
+
+.spell > .right {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 10px;
+}
+
+.spell-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.spell-header > .level {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: #666 2px solid;
+    border-radius: 100%;
+}
+
+.spell-header > h3 {
+    margin: 0;
+}
+
+.categories {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.categories > span {
+    background-color: #444;
+    padding: 5px;
+    border-radius: 5px;
 }
