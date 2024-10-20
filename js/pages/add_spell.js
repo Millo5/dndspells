@@ -1,19 +1,26 @@
-import { CATEGORIES, RUNE_COMPONENTS, RUNE_ARCHITECTURES } from "./static.js";
-
-
+import { CATEGORIES, RUNE_COMPONENTS, RUNE_ARCHITECTURES } from "../static.js";
+import { Spell } from "../spells.js";
 
 var selectedComponents = [];
 var selectedCategories = [];
 var selectedArchitecture = "";
 
+var currentSpell = Spell.create("new-spell");
+
+const componentsContainer = document.getElementById("components");
+const categoriesContainer = document.getElementById("categories");
+const architecturesContainer = document.getElementById("architecture");
+
+
 const main = () => {
+    // Initialize the add spell page, start by adding id, components, categories, and architecture.
+    // Check if the spell id provided is in the dnd5e database, if it is, fill in the details.
+    // then edit the details and save it to the local database.
+
     console.log(RUNE_COMPONENTS)
     console.log(CATEGORIES)
     console.log(RUNE_ARCHITECTURES)
 
-    const componentsContainer = document.getElementById("components");
-    const categoriesContainer = document.getElementById("categories");
-    const architecturesContainer = document.getElementById("architecture");
 
     // Components
     RUNE_COMPONENTS.forEach((component) => {
@@ -64,8 +71,7 @@ const main = () => {
 
 }
 
-
-
+// Search for components
 const componentSearch = document.getElementById("component-search");
 componentSearch.addEventListener("input", () => {
     const componentsContainer = document.getElementById("components");
@@ -80,20 +86,28 @@ componentSearch.addEventListener("input", () => {
 });
 
 
-var currentSpellInfo = null;
-
-
+// Check spell
 const checkButton = document.getElementById("check-spell");
 checkButton.addEventListener("click", () => {
+    // Validation check
     checkButton.disabled = true;
+    document.getElementById("spell-id").classList.remove("error");
+    componentsContainer.classList.remove("error");
+    categoriesContainer.classList.remove("error");
+    architecturesContainer.classList.remove("error");
 
     const spellId = document.getElementById("spell-id").value;
 
     if (!spellId || selectedComponents.length === 0 || selectedCategories.length === 0 || !selectedArchitecture) {
-        console.log("Please fill in all fields");
+        if (!spellId) document.getElementById("spell-id").classList.add("error");
+        if (selectedComponents.length === 0) componentsContainer.classList.add("error");
+        if (selectedCategories.length === 0) categoriesContainer.classList.add("error");
+        if (!selectedArchitecture) architecturesContainer.classList.add("error");
+
         checkButton.disabled = false;
         return;
     }
+
 
     // /getSpell can return 404 if spell not found
     fetch("http://localhost:3000/getSpell", {
@@ -112,24 +126,31 @@ checkButton.addEventListener("click", () => {
             return res.json();
         })
         .then((res) => {
-            currentSpellInfo = res;
+            console.log(res);
+            currentSpell = Spell.fromJSON(res);
+            console.log(currentSpell);
+
+            const currentSpellKeys = Object.keys(currentSpell);
+            var spellDiff = Object.keys(res).filter((key) => {
+                return !currentSpellKeys.includes(key);
+            });
+
+            console.log(spellDiff);
+
             openDetailsOptions();
         })
         .catch((error) => {
-            currentSpellInfo = {
-                index: spellId,
-                name: spellId.split("-").join(" "),
-                desc: ["Description not found"],
-                level: 0,
+            
+            currentSpell = Spell.create(spellId);
+            currentSpell.name = spellId.split("-").join(" ").upperWords();
 
-                casting_time: "1 action",
-                range: "Self",
-                duration: "Instantaneous",
-                
-                concentration: false,
-                ritual: false,
-                components: "V,S,M",
-            }
+            currentSpell.casting_time = "1 action";
+            currentSpell.range = "Self";
+            currentSpell.duration = "Instantaneous";
+
+            currentSpell.components = "V,S,M";
+            currentSpell.material = "";
+
             openDetailsOptions();
         });
 });
@@ -141,10 +162,11 @@ const openDetailsOptions = () => {
     spellDetails.style.display = "flex";
     spellDetails.innerHTML = "";
 
-    const options = ["name", "desc", "level", "casting_time", "range", "duration", "concentration", "ritual", "components"];
+    const options = ["name", "desc", "higher_level", "level", "casting_time", "range", "duration", "concentration", "ritual", "components"];
     const optionFields = {
         name: "text",
         desc: "textarea",
+        higher_level: "textarea",
         level: "number",
         casting_time: "text",
         range: "text",
@@ -159,10 +181,10 @@ const openDetailsOptions = () => {
         optionDiv.classList.add("option");
 
         const label = document.createElement("label");
-        label.innerHTML = option;
+        label.innerHTML = option.replace("_", " ").upperWords();
         optionDiv.appendChild(label);
 
-        if (option === "desc") {
+        if (option === "desc" || option === "higher_level") {
             const textarea = document.createElement("textarea");
             // textarea.value = currentSpellInfo[option][0];
             // textarea.addEventListener("input", () => {
@@ -177,6 +199,9 @@ const openDetailsOptions = () => {
             const input = document.createElement("input");
             input.type = optionFields[option];
             input.value = currentSpellInfo[option];
+            if (option === "components" && currentSpellInfo.material && currentSpellInfo.material.length > 0) {
+                input.value += ` (${currentSpellInfo.material})`;
+            }
             input.addEventListener("input", () => {
                 currentSpellInfo[option] = input.value;
             });

@@ -30,7 +30,7 @@ const isSpellValid = (spell) => {
 };
 
 const createSpell = (spell) => {
-    const fields = ['id', 'name', 'desc', 'categories', 'components', 'architecture', 'level', 'casting_time', 'range', 'duration', 'concentration', 'ritual'];
+    const fields = ['id', 'name', 'desc', 'categories', 'components', 'architecture', 'level', 'casting_time', 'range', 'duration', 'concentration', 'ritual', 'higher_level'];
     const newSpell = {};
     fields.forEach((field) => {
         newSpell[field] = spell[field];

@@ -101,7 +101,7 @@ input {
 
 input:focus, textarea:focus {
     outline: none;
-    box-shadow: 0 0 5px #2ff;
+    box-shadow: 0 0 3px #2ff;
 }
 
 input[type="checkbox"] {
@@ -135,7 +135,7 @@ input[type="checkbox"] {
     border-radius: 5px;
 }
 
-.addSpell > button {
+button {
     padding: 5px 10px;
     border: 1px solid #333;
     border-radius: 5px;
@@ -146,12 +146,12 @@ input[type="checkbox"] {
     transition: all 0.3s;
 }
 
-.addSpell > button:hover {
+button:hover {
     background-color: #444;
     border: 1px solid #444;
 }
 
-.addSpell > button:disabled {
+button:disabled {
     background-color: #111;
     border: 1px solid #666;
     cursor: not-allowed;
@@ -226,4 +226,49 @@ input[type="checkbox"] {
     background-color: #444;
     padding: 5px;
     border-radius: 5px;
+}
+
+.error {
+    color: #f88;
+}
+input.error {
+    border: 1px solid #f55;
+    background-color: #fee;
+}
+
+/* Spell details */
+.spell-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.close:hover {
+    color: #f88;
+    border-bottom: 1px solid #f88;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+}
+.details > span > .label {
+    font-weight: bold;
+}
+
+
+.rune {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    
+    flex-direction: column;
+
+    font-size: 1.3em;
+    font-family: fantasy;
 }
