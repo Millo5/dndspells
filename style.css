@@ -114,6 +114,7 @@ input[type="checkbox"] {
 #spell-details {
     display: none;
     gap: 10px;
+    margin-top: 10px;
 }
 
 .option {
@@ -123,9 +124,10 @@ input[type="checkbox"] {
 }
 .option > label {
     text-transform: capitalize;
+    flex: 0.1;
 }
 .option > textarea {
-    width: 100%;
+    flex: 1;
     height: 100px;
     min-width: 40%;
     max-height: 200px;
@@ -133,6 +135,14 @@ input[type="checkbox"] {
 
     border: 1px solid #333;
     border-radius: 5px;
+}
+.option > input {
+    flex: 1;
+}
+.option > input[type="checkbox"] {
+    flex: 0.1;
+    width: 20px;
+    height: 20px;
 }
 
 button {

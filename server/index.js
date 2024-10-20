@@ -24,21 +24,13 @@ app.use(express.static(path.join(__dirname, '../client')));
 const getSpells = () => fs.readFileSync(path.join(__dirname, '../allSpells.json'));
 
 const isSpellValid = (spell) => {
-    const check = ['id', 'name', 'desc', 'categories', 'components', 'architecture', 'level', 'casting_time', 'range', 'duration', 'concentration', 'ritual'];
+    const check = ['id', 'name', 'desc', 'categories', 'rune_components', 'rune_architecture', 'level', 'casting_time', 'range', 'duration', 'concentration', 'ritual'];
     const invalid = check.filter((key) => spell[key] === undefined);
     return invalid;
 };
 
-const createSpell = (spell) => {
-    const fields = ['id', 'name', 'desc', 'categories', 'components', 'architecture', 'level', 'casting_time', 'range', 'duration', 'concentration', 'ritual', 'higher_level'];
-    const newSpell = {};
-    fields.forEach((field) => {
-        newSpell[field] = spell[field];
-    });
-    return newSpell;
-}
-
 app.get('/spells', (req, res) => {
+    console.log(`${req.ip} requested all spells`);
     const spells = getSpells();
     res.json(JSON.parse(spells));
 });
@@ -54,10 +46,12 @@ app.get('/spells/:spellId', (req, res) => {
 });
 
 app.post('/addSpell', (req, res) => {
-    const spell = createSpell(req.body);
+    console.log(req.body);
+    const spell = req.body;
 
     const wrong = isSpellValid(spell);
     if (wrong.length > 0) {
+        console.log('Spell is invalid; missing: ' + wrong.join(', '));
         res.status(400).send('Spell is invalid; missing: ' + wrong.join(', '));
         return;
     }

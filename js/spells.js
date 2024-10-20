@@ -18,12 +18,35 @@ export class Spell {
     static initialize = () => loadSpells();
     static all = () => ALL_SPELLS;
     static find = (id) => ALL_SPELLS.find((spell) => spell.id == id);
+    static getFieldInputs = () => {
+        return {
+            name: document.getElementById("name"),
+            desc: document.getElementById("desc"),
+            higher_level: document.getElementById("higher_level"),
+            level: document.getElementById("level"),
+            casting_time: document.getElementById("casting_time"),
+            range: document.getElementById("range"),
+            duration: document.getElementById("duration"),
+            concentration: document.getElementById("concentration"),
+            ritual: document.getElementById("ritual"),
+            components: document.getElementById("components"),
+            icon: document.getElementById("icon"),
+        }
+    }
+    static isValid = (spell) => { // returns an array of missing fields
+        const fields = ['id', 'name', 'desc', 'categories', 'components', 'architecture', 'level', 'casting_time', 'range', 'duration', 'concentration', 'ritual'];
+        const missing = [];
+        fields.forEach((field) => {
+            if (!spell[field]) missing.push(field);
+        });
+        return missing;
+    }
 
     constructor(id) {
 
         this.id = id;
         this.name = "";
-        this.desc = "";
+        this.desc = [];
         this.higher_level = "";
         this.level = 0;
         this.casting_time = "";
@@ -31,7 +54,7 @@ export class Spell {
         this.duration = "";
         this.concentration = false;
         this.ritual = false;
-        this.components = [];
+        this.components = "";
         this.icon = "";
 
         this.rune_components = [];
@@ -69,7 +92,7 @@ export class Spell {
             .setDuration(json.duration)
             .setConcentration(json.concentration)
             .setRitual(json.ritual)
-            .setComponents(json.components)
+            .setComponents(json.components + (json.material ? ` (${json.material})` : ""))
             .setIcon(json.icon)
             .setCategories(json.categories)
             .setRuneComponents(json.rune_components)
@@ -112,13 +135,6 @@ export class Spell {
             })}),
             g("div", {classes: ["details"], children: 
                 ["casting_time", "range", "components", "duration"].map((key) => {
-                    if (key == "components") {
-                        return g("span", {classes: [key], children: [
-                            g("span", {classes: ["label"], children: [document.createTextNode(key.replace("_", " ").upperWords()+":")]}),
-                            document.createTextNode(` ${this[key]}`),
-                            g("span", {classes: ["material"], children: [document.createTextNode(` (${this.material})`)]})
-                        ]});
-                    }
                     return g("span", {classes: [key], children: [
                         g("span", {classes: ["label"], children: [document.createTextNode(key.replace("_", " ").upperWords()+":")]}),
                         document.createTextNode(` ${this[key]}`)

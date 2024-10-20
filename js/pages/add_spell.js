@@ -141,15 +141,12 @@ checkButton.addEventListener("click", () => {
         })
         .catch((error) => {
             
-            currentSpell = Spell.create(spellId);
-            currentSpell.name = spellId.split("-").join(" ").upperWords();
-
-            currentSpell.casting_time = "1 action";
-            currentSpell.range = "Self";
-            currentSpell.duration = "Instantaneous";
-
-            currentSpell.components = "V,S,M";
-            currentSpell.material = "";
+            currentSpell = Spell.create(spellId)
+                .setName(spellId.split("-").join(" ").upperWords())
+                .setCastingTime("1 action")
+                .setRange("Self")
+                .setDuration("Instantaneous")
+                .setComponents("V,S,M");
 
             openDetailsOptions();
         });
@@ -162,11 +159,12 @@ const openDetailsOptions = () => {
     spellDetails.style.display = "flex";
     spellDetails.innerHTML = "";
 
+    // const options = Spell.getOptions();
     const options = ["name", "desc", "higher_level", "level", "casting_time", "range", "duration", "concentration", "ritual", "components"];
     const optionFields = {
         name: "text",
         desc: "textarea",
-        higher_level: "textarea",
+        higher_level: "text",
         level: "number",
         casting_time: "text",
         range: "text",
@@ -184,26 +182,19 @@ const openDetailsOptions = () => {
         label.innerHTML = option.replace("_", " ").upperWords();
         optionDiv.appendChild(label);
 
-        if (option === "desc" || option === "higher_level") {
+        if (option === "desc") {
             const textarea = document.createElement("textarea");
-            // textarea.value = currentSpellInfo[option][0];
-            // textarea.addEventListener("input", () => {
-            //     currentSpellInfo[option][0] = textarea.value;
-            // });
-            textarea.value = currentSpellInfo[option].join("\n\n");
+            textarea.value = currentSpell[option].join("\n\n");
             textarea.addEventListener("input", () => {
-                currentSpellInfo[option] = textarea.value.split("\n\n");
+                currentSpell[option] = textarea.value.split("\n\n");
             });
             optionDiv.appendChild(textarea);
         } else {
             const input = document.createElement("input");
             input.type = optionFields[option];
-            input.value = currentSpellInfo[option];
-            if (option === "components" && currentSpellInfo.material && currentSpellInfo.material.length > 0) {
-                input.value += ` (${currentSpellInfo.material})`;
-            }
+            input.value = currentSpell[option];
             input.addEventListener("input", () => {
-                currentSpellInfo[option] = input.value;
+                currentSpell[option] = input.value;
             });
             optionDiv.appendChild(input);
         }
@@ -222,12 +213,14 @@ const openDetailsOptions = () => {
 };
 
 const saveSpell = () => {
-    const spell = currentSpellInfo;
+    const spell = currentSpell;
+    spell.setCategories(selectedCategories);
+    spell.setRuneComponents(selectedComponents);
+    spell.setRuneArchitecture(selectedArchitecture);
+    spell.setId(document.getElementById("spell-id").value);
 
-    spell.categories = selectedCategories;
-    spell.components = selectedComponents;
-    spell.architecture = selectedArchitecture;
-    spell.id = spell.index;
+    console.log(JSON.stringify(spell));
+
 
     fetch("http://localhost:3000/addSpell", {
         method: "POST",
