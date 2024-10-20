@@ -11,15 +11,14 @@ const componentsContainer = document.getElementById("components");
 const categoriesContainer = document.getElementById("categories");
 const architecturesContainer = document.getElementById("architecture");
 
+var modifiyingSpellId = null;
 
-const main = () => {
+// Main function
+// Initialize the add spell page, start by adding id, components, categories, and architecture.
+const main = async () => {
     // Initialize the add spell page, start by adding id, components, categories, and architecture.
     // Check if the spell id provided is in the dnd5e database, if it is, fill in the details.
     // then edit the details and save it to the local database.
-
-    console.log(RUNE_COMPONENTS)
-    console.log(CATEGORIES)
-    console.log(RUNE_ARCHITECTURES)
 
 
     // Components
@@ -69,6 +68,56 @@ const main = () => {
         categoriesContainer.appendChild(categoryDiv);
     });
 
+
+    // Check if a spell is being edited [the spell id is modifiable]
+    modifiyingSpellId = null;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const spellId = urlParams.get("id");
+
+    if (spellId) {
+        modifiyingSpellId = spellId;
+        document.getElementById("spell-id").value = spellId;
+
+        const spells = await fetch("http://localhost:3000/spells")
+            .then((res) => res.json());
+
+        const spell = spells.find((s) => s.id === spellId);
+
+        if (!spell) {
+            return;
+        }
+
+        currentSpell = Spell.fromJSON(spell);
+        console.log(currentSpell);
+
+        // update the selected components, categories, and architecture
+        selectedComponents = currentSpell.rune_components;
+        selectedCategories = currentSpell.categories;
+        selectedArchitecture = currentSpell.rune_architecture;
+
+        componentsContainer.querySelectorAll(".selectable").forEach((componentDiv) => {
+            if (selectedComponents.includes(componentDiv.innerHTML)) {
+                componentDiv.classList.add("selected");
+            }
+        });
+
+        architecturesContainer.querySelectorAll(".selectable").forEach((architectureDiv) => {
+            if (selectedArchitecture === architectureDiv.innerHTML) {
+                architectureDiv.classList.add("selected");
+            }
+        });
+
+        categoriesContainer.querySelectorAll(".selectable").forEach((categoryDiv) => {
+            if (selectedCategories.includes(categoryDiv.innerHTML)) {
+                categoryDiv.classList.add("selected");
+            }
+        });
+
+        openDetailsOptions();
+
+    }
+
 }
 
 // Search for components
@@ -87,6 +136,8 @@ componentSearch.addEventListener("input", () => {
 
 
 // Check spell
+// Check if the spell id is in the dnd5e database
+// If it is, fill in the details; if not, create a new spell
 const checkButton = document.getElementById("check-spell");
 checkButton.addEventListener("click", () => {
     // Validation check
@@ -152,6 +203,9 @@ checkButton.addEventListener("click", () => {
         });
 });
 
+// Details options
+// Open the details options for the spell
+// Contains other spell details obtainable from the dnd5e database
 const openDetailsOptions = () => {
     checkButton.disabled = false;
 
@@ -159,24 +213,13 @@ const openDetailsOptions = () => {
     spellDetails.style.display = "flex";
     spellDetails.innerHTML = "";
 
-    // const options = Spell.getOptions();
-    const options = ["name", "desc", "higher_level", "level", "casting_time", "range", "duration", "concentration", "ritual", "components"];
-    const optionFields = {
-        name: "text",
-        desc: "textarea",
-        higher_level: "text",
-        level: "number",
-        casting_time: "text",
-        range: "text",
-        duration: "text",
-        concentration: "checkbox",
-        ritual: "checkbox",
-        components: "text",
-    };
+    const optionFields = Spell.getFieldInputs();
 
-    options.forEach((option) => {
+    Object.keys(optionFields).forEach((option) => {
         const optionDiv = document.createElement("div");
         optionDiv.classList.add("option");
+
+        console.log(option + " " + currentSpell[option]);
 
         const label = document.createElement("label");
         label.innerHTML = option.replace("_", " ").upperWords();
@@ -189,6 +232,15 @@ const openDetailsOptions = () => {
                 currentSpell[option] = textarea.value.split("\n\n");
             });
             optionDiv.appendChild(textarea);
+        } else if (optionFields[option] === "checkbox") {
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.checked = currentSpell[option];
+            input.addEventListener("input", () => {
+                currentSpell[option] = !!input.checked;
+            });
+            optionDiv.appendChild(input);
+
         } else {
             const input = document.createElement("input");
             input.type = optionFields[option];
@@ -203,16 +255,69 @@ const openDetailsOptions = () => {
     });
 
 
+    if (modifiyingSpellId) {
+        const modifyInfo = document.createElement("p");
+        modifyInfo.innerHTML = `Modifying Spell: ${modifiyingSpellId}`;
+        modifyInfo.classList.add("modifying");
+        spellDetails.appendChild(modifyInfo);
+
+        const removeButton = document.createElement("button");
+        removeButton.innerHTML = "Remove";
+        removeButton.addEventListener("click", () => {
+            removeSpell(removeButton);
+        });
+        spellDetails.appendChild(removeButton);
+
+        const saveAsNewButton = document.createElement("button");
+        saveAsNewButton.innerHTML = "Save as New";
+        saveAsNewButton.addEventListener("click", () => {
+            saveSpell(saveAsNewButton, true);
+        });
+        spellDetails.appendChild(saveAsNewButton);
+    }
+
     const saveButton = document.createElement("button");
-    saveButton.innerHTML = "Save";
+    saveButton.innerHTML = (modifiyingSpellId) ? "Update" : "Save";
     saveButton.addEventListener("click", () => {
-        saveSpell();
+        saveSpell(saveButton);
     });
     spellDetails.appendChild(saveButton);
     
 };
 
-const saveSpell = () => {
+const removeSpell = async (button) => {
+    button.disabled = true;
+
+    fetch("http://localhost:3000/removeSpell", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            id: currentSpell.id,
+        }),
+    })
+        .then((res) => {
+            if (res.status === 400) {
+                return res.text();
+            }
+            return res.text();
+        })
+        .then((res) => {
+            console.log(res);
+        });
+
+    button.disabled = false;
+    window.location.href = "index.html";
+}
+
+const saveSpell = async (button, asNew = false) => {
+    button.disabled = true;
+
+    if (asNew) {
+        modifiyingSpellId = null;
+    }
+
     const spell = currentSpell;
     spell.setCategories(selectedCategories);
     spell.setRuneComponents(selectedComponents);
@@ -221,6 +326,39 @@ const saveSpell = () => {
 
     console.log(JSON.stringify(spell));
 
+    const spells = await fetch("http://localhost:3000/spells")
+        .then((res) => res.json());
+    
+    let body = spell;
+    if (modifiyingSpellId) {
+        body = {
+            replace: modifiyingSpellId,
+            with: spell,
+        };
+    }
+
+    if (spells.find((s) => s.id === spell.id)) {
+        fetch("http://localhost:3000/updateSpell", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        })
+            .then((res) => {
+                if (res.status === 400) {
+                    return res.text();
+                }
+                return res.text();
+            })
+            .then((res) => {
+                console.log(res);
+            });
+        button.disabled = false;
+        window.location.href = "index.html";
+        return;
+    }
+    
 
     fetch("http://localhost:3000/addSpell", {
         method: "POST",
@@ -238,6 +376,10 @@ const saveSpell = () => {
         .then((res) => {
             console.log(res);
         });
+
+        
+    button.disabled = false;
+    window.location.href = "index.html";
 };
 
 main();

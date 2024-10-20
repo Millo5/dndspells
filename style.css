@@ -54,13 +54,12 @@ a:hover {
     margin: 0;
 }
 
-/* Add spell page */
+/* Edit spell page */
 .addSpell {
     background-color: #222;
     color: #fff;
     padding: 10px;
     border-radius: 5px;
-    cursor: pointer;
 
     display: flex;
     flex-direction: column;
@@ -165,6 +164,35 @@ button:disabled {
     background-color: #111;
     border: 1px solid #666;
     cursor: not-allowed;
+}
+
+.modifying {
+    background-color: #444;
+    color: #f88;
+    border: 1px solid #f88;
+
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 5px;
+    font-weight: bold;
+    animation: color 1.5s infinite;
+
+}
+
+@keyframes color {
+    0% {
+        color: #f88;
+    }
+    50% {
+        color: #fff;
+    }
+    100% {
+        color: #f88;
+    }
 }
 
 /* Spell list */

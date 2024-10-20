@@ -70,16 +70,24 @@ app.post('/removeSpell', (req, res) => {
 });
 
 app.post('/updateSpell', (req, res) => {
-    const spell = req.body;
+    let spell = req.body;
+    let replace = spell.id;
+
+    console.log(req.body)
+
+    if (req.body.replace !== undefined) {
+        replace = req.body.replace;
+        spell = req.body.with;
+    }
+
     const spells = JSON.parse(getSpells());
     const newSpells = spells.map((s) => {
-        if (s.id === spell.id) {
-            return spell;
-        }
+        if (s.id === replace) return spell;
         return s;
     });
-    fs.writeFileSync(path.join(__dirname, '../allSpells.json'), JSON.stringify(newSpells));
+    // fs.writeFileSync(path.join(__dirname, '../allSpells.json'), JSON.stringify(newSpells));
     res.status(200).send('Spell updated successfully');
+
 });
 
 

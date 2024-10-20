@@ -20,24 +20,25 @@ export class Spell {
     static find = (id) => ALL_SPELLS.find((spell) => spell.id == id);
     static getFieldInputs = () => {
         return {
-            name: document.getElementById("name"),
-            desc: document.getElementById("desc"),
-            higher_level: document.getElementById("higher_level"),
-            level: document.getElementById("level"),
-            casting_time: document.getElementById("casting_time"),
-            range: document.getElementById("range"),
-            duration: document.getElementById("duration"),
-            concentration: document.getElementById("concentration"),
-            ritual: document.getElementById("ritual"),
-            components: document.getElementById("components"),
-            icon: document.getElementById("icon"),
+            name: "text",
+            desc: "textarea",
+            higher_level: "textarea",
+            level: "number",
+            casting_time: "text",
+            range: "text",
+            duration: "text",
+            concentration: "checkbox",
+            ritual: "checkbox",
+            components: "text",
+            icon: "text",
         }
     }
     static isValid = (spell) => { // returns an array of missing fields
-        const fields = ['id', 'name', 'desc', 'categories', 'components', 'architecture', 'level', 'casting_time', 'range', 'duration', 'concentration', 'ritual'];
+        const fields = Object.keys(new Spell());
+        console.log(fields);
         const missing = [];
         fields.forEach((field) => {
-            if (!spell[field]) missing.push(field);
+            if (spell[field] === undefined) missing.push(field);
         });
         return missing;
     }
@@ -125,14 +126,17 @@ export class Spell {
     createDivDetailed(closeFunction) {
         return g("div", {classes: ["spell-details"], children: [
             g("button", {classes: ["close"], children: [document.createTextNode("Close")], exist: () => true, onclick: closeFunction}),
+
             g("div", {classes: ["spell-header"], children: [
                 g("span", {classes: ["level"], children: [document.createTextNode(`${this.level}`)]}),
                 g("span", {classes: ["icon"], children: [document.createTextNode(this.icon)], exist: () => this.icon != undefined}),
                 g("h3", {children: [document.createTextNode(this.name)]})
             ]}),
+
             g("div", {classes: ["categories"], children: this.categories.map((category) => {
                 return g("span", {children: [document.createTextNode(category)]});
             })}),
+
             g("div", {classes: ["details"], children: 
                 ["casting_time", "range", "components", "duration"].map((key) => {
                     return g("span", {classes: [key], children: [
@@ -141,6 +145,7 @@ export class Spell {
                     ]});
                 })
             }),
+
             g("div", {classes: ["description"], children: this.desc.map((desc) => {
                 return g("p", {children: [document.createTextNode(desc)]});
             })}),
@@ -155,7 +160,11 @@ export class Spell {
                     return g("span", {children: [document.createTextNode(component)]});
                 }
                 )})
-            ]})
+            ]}),
+
+            g("button", {classes: ["edit"], children: [document.createTextNode("Edit")], onclick: () => {
+                window.location.href = `editSpell.html?id=${this.id}`;
+            }})
         ]});
     }
 
