@@ -101,6 +101,15 @@ export class Spell {
     }
 
 
+    createDivHeader() {
+        return g("div", {classes: ["spell-header"], children: [
+            g("span", {classes: ["level"], children: [document.createTextNode(`${this.level}`)]}),
+            g("span", {classes: ["icon"], children: [document.createTextNode(this.icon)], exist: () => this.icon != undefined}),
+            g("h3", {children: [document.createTextNode(this.name)]}),
+            g("div", {classes: ["ritual"], children: [document.createTextNode("R")], exist: () => this.ritual}),
+            g("div", {classes: ["concentration"], children: [document.createTextNode("C")], exist: () => this.concentration})
+        ]});
+    }
 
     /*
     *   Only contains the name, level, icon, categories and casting time
@@ -108,11 +117,7 @@ export class Spell {
     createDivCompact() {
         return g("div", {classes: ["spell"], id: this.id, children: [
             g("div", {classes: ["left"], children: [
-                g("div", {classes: ["spell-header"], children: [
-                    g("span", {classes: ["level"], children: [document.createTextNode(`${this.level}`)]}),
-                    g("span", {classes: ["icon"], children: [document.createTextNode(this.icon)], exist: () => this.icon != undefined}),
-                    g("h3", {children: [document.createTextNode(this.name)]})
-                ]}),
+                this.createDivHeader(),
                 g("div", {classes: ["categories"], children: this.categories.map((category) => {
                     return g("span", {children: [document.createTextNode(category)]});
                 })})
@@ -127,11 +132,7 @@ export class Spell {
         return g("div", {classes: ["spell-details"], children: [
             g("button", {classes: ["close"], children: [document.createTextNode("Close")], exist: () => true, onclick: closeFunction}),
 
-            g("div", {classes: ["spell-header"], children: [
-                g("span", {classes: ["level"], children: [document.createTextNode(`${this.level}`)]}),
-                g("span", {classes: ["icon"], children: [document.createTextNode(this.icon)], exist: () => this.icon != undefined}),
-                g("h3", {children: [document.createTextNode(this.name)]})
-            ]}),
+            this.createDivHeader(),
 
             g("div", {classes: ["categories"], children: this.categories.map((category) => {
                 return g("span", {children: [document.createTextNode(category)]});

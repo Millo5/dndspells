@@ -85,7 +85,7 @@ app.post('/updateSpell', (req, res) => {
         if (s.id === replace) return spell;
         return s;
     });
-    // fs.writeFileSync(path.join(__dirname, '../allSpells.json'), JSON.stringify(newSpells));
+    fs.writeFileSync(path.join(__dirname, '../allSpells.json'), JSON.stringify(newSpells));
     res.status(200).send('Spell updated successfully');
 
 });
