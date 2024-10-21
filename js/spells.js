@@ -118,7 +118,7 @@ export class Spell {
         return g("div", {classes: ["spell"], id: this.id, children: [
             g("div", {classes: ["left"], children: [
                 this.createDivHeader(),
-                g("div", {classes: ["categories"], children: this.categories.map((category) => {
+                g("div", {classes: ["categories"], children: this.categories.sort().map((category) => {
                     return g("span", {children: [document.createTextNode(category)]});
                 })})
             ]}),
@@ -134,7 +134,7 @@ export class Spell {
 
             this.createDivHeader(),
 
-            g("div", {classes: ["categories"], children: this.categories.map((category) => {
+            g("div", {classes: ["categories"], children: this.categories.sort().map((category) => {
                 return g("span", {children: [document.createTextNode(category)]});
             })}),
 

@@ -1,5 +1,6 @@
 
 import "../static.js";
+import { CATEGORIES, g } from "../static.js";
 import { Spell } from "../spells.js";
 
 
@@ -50,6 +51,8 @@ const showAddSpellButton = async () => {
     }
 }
 
+let selectedCategories = [];
+
 const main = async () => {
     showAddSpellButton();
 
@@ -69,6 +72,56 @@ const main = async () => {
             });
             spellList.appendChild(div);
         });
+    });
+
+    const filterButton = document.getElementById("filter-button");
+    const filterOptions = document.getElementById("filter-options");
+    filterButton.addEventListener("click", () => {
+        // I want toggling to slide it up and down
+        if (filterOptions.style.top === "70px") {
+            filterOptions.style.top = "-100px";
+        } else {
+            filterOptions.style.top = "70px";
+        }
+    });
+
+    window.addEventListener("scroll", () => {
+        filterOptions.style.top = "-100px";
+    });
+
+    const filterCategories = document.getElementById("filter-categories");
+    CATEGORIES.forEach((category) => {
+        const div = g("div", {
+            classes: ["selectable"],
+            children: [g("p", {children: [document.createTextNode(category)]})]
+        });
+        div.addEventListener("click", () => {
+            if (selectedCategories.includes(category)) {
+                selectedCategories = selectedCategories.filter((c) => c !== category);
+                div.classList.remove("selected");
+            } else {
+                selectedCategories.push(category);
+                div.classList.add("selected");
+            }
+
+            updateSpellList();
+        });
+        filterCategories.appendChild(div);
+    });
+}
+
+const updateSpellList = () => {
+    const spellList = document.getElementById("spell-list");
+    spellList.innerHTML = "";
+    // spell.categories
+    Spell.all().filter((spell) => {
+        return selectedCategories.length === 0 || selectedCategories.some((category) => spell.categories.includes(category));
+    }).forEach((spell) => {
+        const div = spell.createDivCompact();
+        div.addEventListener("click", () => {
+            openSpellDetails(spell.id);
+        });
+        spellList.appendChild(div);
     });
 }
 

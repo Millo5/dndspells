@@ -18,7 +18,12 @@ nav {
     justify-content: center;
     align-items: center;
     
+    position: relative;
+    z-index: 100;
     gap: 10px;
+
+    height: 50px;
+    max-height: 50px;
 }
 
 main {
@@ -195,6 +200,48 @@ button:disabled {
     }
 }
 
+/* filters */
+#filter-button {
+    width: 30px;
+    padding: 5px;
+}
+
+#filter-options {
+    width: 100%;
+    color: #fff;
+
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px;
+
+    transition: all 0.3s;
+
+    top: -100px;
+    position: fixed;
+}
+
+#filter-categories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    background-color: #111;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#filter-categories > .selectable {
+    
+}
+
+#filter-categories > .selectable > p {
+    margin: 0;
+}
+
 /* Spell list */
 .main-backboard {
     background-color: #222;
@@ -203,6 +250,7 @@ button:disabled {
     border-radius: 5px;
 
     margin-top: 40px;
+    margin-bottom: 20px;
 }
 
 .spell {
