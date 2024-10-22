@@ -1,4 +1,4 @@
-import { CATEGORIES, RUNE_COMPONENTS, RUNE_ARCHITECTURES } from "../static.js";
+import { CATEGORIES, RUNE_COMPONENTS, RUNE_ARCHITECTURES, ICONS } from "../static.js";
 import { Spell } from "../spells.js";
 
 var selectedComponents = [];
@@ -240,7 +240,35 @@ const openDetailsOptions = () => {
                 currentSpell[option] = !!input.checked;
             });
             optionDiv.appendChild(input);
+        } else if (option == "icon") {
 
+            const input = document.createElement("input");
+            input.type = optionFields[option];
+            input.value = currentSpell[option];
+            input.addEventListener("input", () => {
+                currentSpell[option] = input.value;
+            });
+
+            const selectPreset = document.createElement("select");
+            selectPreset.innerHTML = "<option value=''>None</option>";
+            // port icons from another file
+            const icons = ICONS;
+            Object.keys(icons).forEach((icon) => {
+                const option = document.createElement("option");
+                option.value = icon;
+                option.innerHTML = icons[icon];
+                selectPreset.appendChild(option);
+
+            });
+            selectPreset.addEventListener("change", () => {
+                currentSpell[option] = selectPreset.value;
+                input.value = selectPreset.value;
+            });
+
+
+
+            optionDiv.appendChild(selectPreset);
+            optionDiv.appendChild(input);
         } else {
             const input = document.createElement("input");
             input.type = optionFields[option];

@@ -13,6 +13,44 @@ export const CATEGORIES = [
 ]; // more to be added
 
 
+// Icons; emoji or svg
+export const ICONS = {
+    "Default": "❓",
+
+    "Lightning": "⚡",
+    "Fire": "🔥",
+    "Air": "💨",
+    "Water": "💧",
+    "Advanced Locking": "🔒",
+    "Necromancy": "💀",
+    "Earth": "🌍",
+    "Illusionary": "👻",
+    "Space": "🌌",
+    "Nature": "🌿",
+    "Monde": "🌙",
+    "Instantiate": "🌀",
+    "Sealing": "🔏",
+    "Psychic": "🌀",
+    "Protecting": "🛡️",
+    "Harming": "💥",
+    "Shadow": "🌑",
+    "Holy": "🌟",
+    "Unholy": "👿",
+    "Explosion": "💥",
+    "Metal": "🔩",
+    "Cold": "❄️",
+    "Oil": "⛽",
+    "Literature": "📚",
+    "Locking": "🔒",
+    "Light": "💡",
+    "Dark": "🌚",
+    "Sound": "🔊",
+    "Time": "⏳",
+    "Force": "💪",
+    "Life": "🌱",
+}
+
+
 export const g = (tag, args = {classes: [], id: "", children: [], exist: () => {true}, onclick: () => {}}) => {
     if (args.exist != undefined && !args.exist()) return null;
     const element = document.createElement(tag);
