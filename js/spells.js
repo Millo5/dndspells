@@ -1,7 +1,7 @@
 
 var ALL_SPELLS = [];
 
-import { g } from "./static.js";
+import { g, ICONS } from "./static.js";
 
 const loadSpells = async () => {
     let response = await fetch("allSpells.json");
@@ -41,6 +41,9 @@ export class Spell {
             if (spell[field] === undefined) missing.push(field);
         });
         return missing;
+    }
+    static getIconFromId = (id) => {
+        return id in ICONS ? ICONS[id] : id;
     }
 
     constructor(id) {
@@ -94,7 +97,7 @@ export class Spell {
             .setConcentration(json.concentration)
             .setRitual(json.ritual)
             .setComponents(json.components + (json.material ? ` (${json.material})` : ""))
-            .setIcon(json.icon)
+            .setIcon(json.icon?.length == 0 ? undefined : json.icon)
             .setCategories(json.categories)
             .setRuneComponents(json.rune_components)
             .setRuneArchitecture(json.rune_architecture);
@@ -104,7 +107,7 @@ export class Spell {
     createDivHeader() {
         return g("div", {classes: ["spell-header"], children: [
             g("span", {classes: ["level"], children: [document.createTextNode(`${this.level}`)]}),
-            g("span", {classes: ["icon"], children: [document.createTextNode(this.icon)], exist: () => this.icon != undefined}),
+            g("span", {classes: ["icon"], children: [document.createTextNode(Spell.getIconFromId(this.icon))], exist: () => this.icon != undefined}),
             g("h3", {children: [document.createTextNode(this.name)]}),
             g("div", {classes: ["ritual"], children: [document.createTextNode("R")], exist: () => this.ritual}),
             g("div", {classes: ["concentration"], children: [document.createTextNode("C")], exist: () => this.concentration})

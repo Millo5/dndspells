@@ -51,7 +51,10 @@ const showAddSpellButton = async () => {
     }
 }
 
-let selectedCategories = [];
+let filter = {
+    categories: [],
+    time: null
+}
 
 const main = async () => {
     showAddSpellButton();
@@ -74,6 +77,7 @@ const main = async () => {
         });
     });
 
+    // Filter by categories
     const filterButton = document.getElementById("filter-button");
     const filterOptions = document.getElementById("filter-options");
     filterButton.addEventListener("click", () => {
@@ -96,26 +100,48 @@ const main = async () => {
             children: [g("p", {children: [document.createTextNode(category)]})]
         });
         div.addEventListener("click", () => {
-            if (selectedCategories.includes(category)) {
-                selectedCategories = selectedCategories.filter((c) => c !== category);
+            if (filter.categories.includes(category)) {
+                filter.categories = filter.categories.filter((c) => c !== category);
                 div.classList.remove("selected");
             } else {
-                selectedCategories.push(category);
+                filter.categories.push(category);
                 div.classList.add("selected");
             }
 
-            updateSpellList();
+            updateSpellListFiltered();
         });
         filterCategories.appendChild(div);
     });
+
+    filterCategories.appendChild(g("hr", {}));
+
+    ["Action", "Bonus Action", "Reaction", "Other"].forEach((time) => {
+        const div = g("div", {
+            classes: ["selectable", "time"],
+            children: [g("p", {children: [document.createTextNode(time)]})]
+        });
+        div.addEventListener("click", () => {
+            if (selectedCategories.includes(time)) {
+                selectedCategories = selectedCategories.filter((c) => c !== time);
+                div.classList.remove("selected");
+            } else {
+                selectedCategories.push(time);
+                div.classList.add("selected");
+            }
+
+            updateSpellListFiltered();
+        });
+        filterCategories.appendChild(div);
+    });
+
 }
 
-const updateSpellList = () => {
+const updateSpellListFiltered = () => {
     const spellList = document.getElementById("spell-list");
     spellList.innerHTML = "";
     // spell.categories
     Spell.all().filter((spell) => {
-        return selectedCategories.length === 0 || selectedCategories.some((category) => spell.categories.includes(category));
+        return filter.categories.length === 0 || filter.categories.some((category) => spell.categories.includes(category));
     }).forEach((spell) => {
         const div = spell.createDivCompact();
         div.addEventListener("click", () => {
