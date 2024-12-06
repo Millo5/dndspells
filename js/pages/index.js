@@ -83,14 +83,14 @@ const main = async () => {
     filterButton.addEventListener("click", () => {
         // I want toggling to slide it up and down
         if (filterOptions.style.top === "70px") {
-            filterOptions.style.top = "-100px";
+            filterOptions.style.top = "-200px";
         } else {
             filterOptions.style.top = "70px";
         }
     });
 
     window.addEventListener("scroll", () => {
-        filterOptions.style.top = "-100px";
+        filterOptions.style.top = "-200px";
     });
 
     const filterCategories = document.getElementById("filter-categories");
@@ -113,22 +113,26 @@ const main = async () => {
         filterCategories.appendChild(div);
     });
 
+
+    // Filter by time
     filterCategories.appendChild(g("hr", {}));
 
-    ["Action", "Bonus Action", "Reaction", "Other"].forEach((time) => {
+    ["Action", "Bonus Action", "Reaction", "Other", "Ritual", "Concentration"].forEach((time) => {
         const div = g("div", {
             classes: ["selectable", "time"],
             children: [g("p", {children: [document.createTextNode(time)]})]
         });
         div.addEventListener("click", () => {
-            if (selectedCategories.includes(time)) {
-                selectedCategories = selectedCategories.filter((c) => c !== time);
+            if (filter.time === time) {
+                filter.time = null;
                 div.classList.remove("selected");
             } else {
-                selectedCategories.push(time);
+                document.querySelectorAll(".time").forEach((div) => {
+                    div.classList.remove("selected");
+                });
+                filter.time = time;
                 div.classList.add("selected");
             }
-
             updateSpellListFiltered();
         });
         filterCategories.appendChild(div);
@@ -139,8 +143,23 @@ const main = async () => {
 const updateSpellListFiltered = () => {
     const spellList = document.getElementById("spell-list");
     spellList.innerHTML = "";
+
+    const timeMapping = {
+        "Action": (spell) => spell.casting_time.includes("action"),
+        "Bonus Action": (spell) => spell.casting_time.includes("bonus"),
+        "Reaction": (spell) => spell.casting_time.includes("reaction"),
+        "Ritual": (spell) => spell.ritual,
+        "Concentration": (spell) => spell.concentration,
+        "Other": (spell) => !spell.casting_time.includes("action") && !spell.casting_time.includes("bonus") && !spell.casting_time.includes("reaction")
+    }
+
     // spell.categories
     Spell.all().filter((spell) => {
+        // Filter by time
+        console.log(spell);
+        // if (filter.time !== null && spell.time !== filter.time) return false;
+        if (filter.time !== null && !timeMapping[filter.time](spell)) return false;
+        // Filter by categories
         return filter.categories.length === 0 || filter.categories.some((category) => spell.categories.includes(category));
     }).forEach((spell) => {
         const div = spell.createDivCompact();
